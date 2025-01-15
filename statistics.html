@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Statistiques</title>
+    <link rel="stylesheet" href="assets/css/global.css" />
+    <link rel="stylesheet" href="assets/css/responsive.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Statistiques</h1>
+
+         <!-- Filtres -->
+      <div  class="filters">
+        <h2>Filtres</h2>
+        <div>
+          <label for="filter-type">Type :</label>
+          <select  style="margin-left: 70px;" id="filter-type">
+            <option value="all">Tous</option>
+            <option value="income">Revenus</option>
+            <option value="expense">Dépenses</option>
+          </select>
+        </div>
+        <div>
+          <label for="filter-category">Catégorie :</label>
+          <input style="margin-left: 34px;"  type="text" id="filter-category" />
+        </div>
+        <div>
+          <label for="filter-start-date">Date :</label>
+          <input  style="margin-left: 69px;" type="date" id="filter-start-date" />
+        </div>
+        <div style="display: none">
+          <label for="filter-end-date"> :</label>
+          <input type="date" id="filter-end-date" />
+        </div>
+        <button style="margin-top: 19px;" id="apply-filters">Appliquer les filtres</button>
+      </div>
+
+       <!-- Résultats filtrés -->
+       <div id="results" style="margin-top: 20px;"></div>
+
+      <!-- Résumé des finances -->
+      <div class="summary">
+        <p>Balance totale : <span id="total-balance">0</span> CFA</p>
+        <p>Total des revenus : <span id="total-income">0</span> CFA</p>
+        <p>Total des dépenses : <span id="total-expense">0</span> CFA</p>
+      </div>
+
+      <!-- Canvas pour le graphique -->
+      <canvas id="categoryChart" width="400" height="200"></canvas>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+      // Importer les données de localStorage
+      const transactions = JSON.parse(localStorage.getItem("transactions")) || [];
+
+      // Calculer les totaux
+      function calculateTotals() {
+        let totalIncome = 0;
+        let totalExpense = 0;
+
+        
+
+        transactions.forEach((transaction) => {
+          if (transaction.type === "income") {
+            totalIncome += transaction.amount;
+          } else {
+            totalExpense += transaction.amount;
+          }
+        });
+
+        document.getElementById("total-balance").textContent =
+          totalIncome - totalExpense;
+        document.getElementById("total-income").textContent = totalIncome;
+        document.getElementById("total-expense").textContent = totalExpense;
+      }
+
+      // Calculer les données pour le graphique
+      function calculateCategoryData() {
+        const categoryTotals = {};
+
+        transactions.forEach((transaction) => {
+          if (!categoryTotals[transaction.category]) {
+            categoryTotals[transaction.category] = { income: 0, expense: 0 };
+          }
+          if (transaction.type === "income") {
+            categoryTotals[transaction.category].income += transaction.amount;
+          } else {
+            categoryTotals[transaction.category].expense += transaction.amount;
+          }
+        });
+
+        return categoryTotals;
+      }
+
+
+      
+      // Créer le graphique
+      function createChart() {
+        const categoryData = calculateCategoryData();
+        const labels = Object.keys(categoryData);
+        const incomeData = labels.map((category) => categoryData[category].income);
+        const expenseData = labels.map((category) => categoryData[category].expense);
+
+        const ctx = document.getElementById("categoryChart").getContext("2d");
+        new Chart(ctx, {
+          type: "bar",
+          data: {
+            labels: labels,
+            datasets: [
+              {
+                label: "Revenus",
+                data: incomeData,
+                backgroundColor: "rgba(54, 162, 235, 0.7)",
+                borderColor: "rgba(54, 162, 235, 1)",
+                borderWidth: 1,
+              },
+              {
+                label: "Dépenses",
+                data: expenseData,
+                backgroundColor: "rgba(255, 99, 132, 0.7)",
+                borderColor: "rgba(255, 99, 132, 1)",
+                borderWidth: 1,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              legend: {
+                position: "top",
+              },
+              title: {
+                display: true,
+                text: "Répartition des revenus et dépenses par catégorie",
+              },
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+              },
+            },
+          },
+        });
+        
+      }
+
+      
+      
+
+      // Initialiser la page
+      calculateTotals();
+      createChart();
+    </script>
+
+<script>
+   document.addEventListener("DOMContentLoaded", function () {
+  document.getElementById("apply-filters").addEventListener("click", function () {
+    const storedData = localStorage.getItem("transactions");
+    const transactions = storedData ? JSON.parse(storedData) : [];
+
+    const typeFilter = document.getElementById("filter-type").value;
+    const categoryFilter = document.getElementById("filter-category").value.toLowerCase();
+    const startDateFilter = document.getElementById("filter-start-date").value;
+
+    const filteredTransactions = transactions.filter(transaction => {
+      const matchesType = typeFilter === "all" || transaction.type === typeFilter;
+      const matchesCategory = !categoryFilter || transaction.category.toLowerCase().includes(categoryFilter);
+      const matchesDate = !startDateFilter || transaction.date >= startDateFilter;
+
+      return matchesType && matchesCategory && matchesDate;
+    });
+
+    displayResults(filteredTransactions);
+  });
+
+  function displayResults(results) {
+    const resultsContainer = document.getElementById("results");
+    resultsContainer.innerHTML = ""; // Nettoyer les anciens résultats
+
+    if (results.length === 0) {
+      resultsContainer.innerHTML = "<p>Aucune transaction trouvée.</p>";
+      return;
+    }
+
+    results.forEach(transaction => {
+      const transactionElement = document.createElement("div");
+      transactionElement.textContent = `Type: ${transaction.type}, Catégorie: ${transaction.category}, Date: ${transaction.date}, Montant: ${transaction.amount}`;
+      resultsContainer.appendChild(transactionElement);
+    });
+  }
+});
+
+  </script>
+  
+    <script src="assets/js/main.js"></script>
+
+    <script src="assets/js/statistique.js"></script>
+  </body>
+</html>
+
+
+
+
+
