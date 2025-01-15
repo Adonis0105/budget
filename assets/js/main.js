@@ -11,6 +11,7 @@ const filterStartDate = document.getElementById("filter-start-date");
 const filterEndDate = document.getElementById("filter-end-date");
 
 let transactions = JSON.parse(localStorage.getItem("transactions")) || [];
+let chartInstance;
 
 // Fonction pour mettre à jour l'affichage
 function updateDisplay() {
@@ -23,8 +24,6 @@ function updateDisplay() {
 
   // Filtrer et afficher les transactions
   transactions.forEach((transaction, index) => {
-    const row = document.createElement("tr");
-
     if (
       (filterType.value === "all" || transaction.type === filterType.value) &&
       (filterCategory.value === "" ||
@@ -34,15 +33,16 @@ function updateDisplay() {
       (filterEndDate.value === "" ||
         new Date(transaction.date) <= new Date(filterEndDate.value))
     ) {
+      const row = document.createElement("tr");
       row.innerHTML = `
-                        <td>${transaction.type === "income" ? "Revenu" : "Dépense"}</td>
-                        <td>${transaction.amount}</td>
-                        <td>${transaction.category}</td>
-                        <td>${transaction.date}</td>
-                        <td>
-                            <button onclick="deleteTransaction(${index})">Supprimer</button>
-                        </td>
-                    `;
+        <td>${transaction.type === "income" ? "Revenu" : "Dépense"}</td>
+        <td>${transaction.amount}</td>
+        <td>${transaction.category}</td>
+        <td>${transaction.date}</td>
+        <td>
+            <button onclick="deleteTransaction(${index})">Supprimer</button>
+        </td>
+      `;
       transactionsTable.appendChild(row);
     }
 
@@ -58,9 +58,12 @@ function updateDisplay() {
   totalIncomeEl.textContent = totalIncome;
   totalExpenseEl.textContent = totalExpense;
   totalBalanceEl.textContent = totalIncome - totalExpense;
+
+  // Mettre à jour le graphique
+  updateChart();
 }
 
-// Fonction pour ajouter une transaction
+// Ajouter une transaction
 transactionForm.addEventListener("submit", (e) => {
   e.preventDefault();
 
@@ -80,22 +83,14 @@ transactionForm.addEventListener("submit", (e) => {
   transactionForm.reset();
 });
 
-// Fonction pour supprimer une transaction
+// Supprimer une transaction
 function deleteTransaction(index) {
   transactions.splice(index, 1);
   localStorage.setItem("transactions", JSON.stringify(transactions));
   updateDisplay();
 }
 
-// Appliquer les filtres
-document
-  .getElementById("apply-filters")
-  .addEventListener("click", updateDisplay);
-
-// Initialiser l'affichage
-updateDisplay();
-
-// Fonction pour regrouper les transactions par catégorie et calculer les totaux
+// Calculer les données pour le graphique
 function calculateCategoryData() {
   const categoryTotals = {};
 
@@ -113,61 +108,68 @@ function calculateCategoryData() {
   return categoryTotals;
 }
 
-// Fonction pour générer le graphique
-function renderChart() {
+// Initialiser ou mettre à jour le graphique
+function updateChart() {
   const categoryData = calculateCategoryData();
-
-  const labels = Object.keys(categoryData); // Les catégories
+  const labels = Object.keys(categoryData);
   const incomeData = labels.map((category) => categoryData[category].income);
   const expenseData = labels.map((category) => categoryData[category].expense);
 
-  const ctx = document.getElementById("categoryChart").getContext("2d");
-  new Chart(ctx, {
-    type: "bar", // Type de graphique (barres)
-    data: {
-      labels: labels,
-      datasets: [
-        {
-          label: "Revenus",
-          data: incomeData,
-          backgroundColor: "rgba(54, 162, 235, 0.7)", // Bleu pour les revenus
-          borderColor: "rgba(54, 162, 235, 1)",
-          borderWidth: 1,
+  if (!chartInstance) {
+    const ctx = document.getElementById("categoryChart").getContext("2d");
+    chartInstance = new Chart(ctx, {
+      type: "bar",
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: "Revenus",
+            data: incomeData,
+            backgroundColor: "rgba(54, 162, 235, 0.7)",
+            borderColor: "rgba(54, 162, 235, 1)",
+            borderWidth: 1,
+          },
+          {
+            label: "Dépenses",
+            data: expenseData,
+            backgroundColor: "rgba(255, 99, 132, 0.7)",
+            borderColor: "rgba(255, 99, 132, 1)",
+            borderWidth: 1,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: {
+            position: "top",
+          },
+          title: {
+            display: true,
+            text: "Répartition des revenus et dépenses par catégorie",
+          },
         },
-        {
-          label: "Dépenses",
-          data: expenseData,
-          backgroundColor: "rgba(255, 99, 132, 0.7)", // Rouge pour les dépenses
-          borderColor: "rgba(255, 99, 132, 1)",
-          borderWidth: 1,
-        },
-      ],
-    },
-    options: {
-      responsive: true,
-      plugins: {
-        legend: {
-          position: "top", // Position de la légende
-        },
-        title: {
-          display: true,
-          text: "Répartition des revenus et dépenses par catégorie",
+        scales: {
+          y: {
+            beginAtZero: true,
+          },
         },
       },
-      scales: {
-        y: {
-          beginAtZero: true,
-        },
-      },
-    },
-  });
+    });
+  } else {
+    chartInstance.data.labels = labels;
+    chartInstance.data.datasets[0].data = incomeData;
+    chartInstance.data.datasets[1].data = expenseData;
+    chartInstance.update();
+  }
 }
 
-// Mettre à jour le graphique à chaque mise à jour de l'affichage
-transactionForm.addEventListener("submit", () => setTimeout(renderChart, 0));
-document
-  .getElementById("apply-filters")
-  .addEventListener("click", () => setTimeout(renderChart, 0));
+// Appliquer les filtres immédiatement
+[filterType, filterCategory, filterStartDate, filterEndDate].forEach(
+  (filter) => {
+    filter.addEventListener("input", updateDisplay);
+  },
+);
 
-// Initialiser le graphique
-renderChart();
+// Initialiser l'affichage
+updateDisplay();
