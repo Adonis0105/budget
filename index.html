@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gestionnaire de Budget</title>
+    <link rel="stylesheet" href="assets/css/global.css" />
+    <link rel="stylesheet" href="assets/css/responsive.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Gestionnaire de Budget</h1>
+
+      <!-- Formulaire pour ajouter une transaction -->
+      <form id="transaction-form">
+        <h2>Ajouter une transaction</h2>
+        <div>
+          <label for="type">Type :</label>
+          <select id="type">
+            <option value="income">Revenu</option>
+            <option value="expense">Dépense</option>
+          </select>
+        </div>
+        <div>
+          <label for="amount">Montant :</label>
+          <input type="number" id="amount" required />
+        </div>
+        <div>
+          <label for="category">Catégorie :</label>
+          <input type="text" id="category" required />
+        </div>
+        <div>
+          <label for="date">Date :</label>
+          <input type="date" id="date" required />
+        </div>
+        <button type="submit">Ajouter</button>
+      </form>
+
+      <!-- Résumé des finances -->
+      <div class="summary">
+        <p>Balance totale : <span id="total-balance">0</span> CFA</p>
+        <p>Total des revenus : <span id="total-income">0</span> CFA</p>
+        <p>Total des dépenses : <span id="total-expense">0</span> CFA</p>
+      </div>
+
+      <!-- Filtres -->
+      <div class="filters">
+        <h2>Filtres</h2>
+        <div>
+          <label for="filter-type">Type :</label>
+          <select id="filter-type">
+            <option value="all">Tous</option>
+            <option value="income">Revenus</option>
+            <option value="expense">Dépenses</option>
+          </select>
+        </div>
+        <div>
+          <label for="filter-category">Catégorie :</label>
+          <input type="text" id="filter-category" />
+        </div>
+        <div>
+          <label for="filter-start-date">Date de début :</label>
+          <input type="date" id="filter-start-date" />
+        </div>
+        <div style="display: none">
+          <label for="filter-end-date">Date de fin :</label>
+          <input type="date" id="filter-end-date" />
+        </div>
+        <button id="apply-filters">Appliquer les filtres</button>
+      </div>
+
+      <!-- Tableau des transactions -->
+      <table id="transactions-table">
+        <thead>
+          <tr>
+            <th>Type</th>
+            <th>Montant (CFA)</th>
+            <th>Catégorie</th>
+            <th>Date</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Toutes les Transactions  -->
+        </tbody>
+      </table>
+    </div>
+
+    <canvas
+      style="margin-top: 50px"
+      id="categoryChart"
+      width="400"
+      height="200"
+    ></canvas>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script src="assets/js/main.js"></script>
+  </body>
+</html>

@@ -1,0 +1,72 @@
+@media (max-width: 768px) {
+  .container {
+    padding: 15px;
+  }
+  h1 {
+    font-size: 1.8em;
+  }
+  form div {
+    margin-bottom: 10px;
+  }
+  form label,
+  form input,
+  form select,
+  form button {
+    font-size: 0.9em;
+  }
+  .summary {
+    font-size: 0.9em;
+    padding: 8px;
+  }
+  table th,
+  table td {
+    font-size: 0.9em;
+    padding: 8px;
+  }
+  table {
+    font-size: 0.8em;
+  }
+  table button {
+    font-size: 0.8em;
+    padding: 4px 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  #transactions-table {
+    margin-right: -20px;
+  }
+  .container {
+    padding: 10px;
+    margin-right: -20px;
+  }
+  h1 {
+    font-size: 1.5em;
+  }
+  form div {
+    margin-bottom: 8px;
+  }
+  form label,
+  form input,
+  form select,
+  form button {
+    font-size: 0.8em;
+  }
+  .summary {
+    font-size: 0.8em;
+    padding: 6px;
+  }
+  table th,
+  table td {
+    font-size: 0.8em;
+    padding: 6px;
+  }
+  table button {
+    font-size: 0.7em;
+    padding: 3px 6px;
+  }
+  body {
+    font-size: 0.7em;
+    padding: 6px 6px;
+  }
+}
