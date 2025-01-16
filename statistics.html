@@ -11,12 +11,12 @@
     <div class="container">
       <h1>Statistiques</h1>
 
-         <!-- Filtres -->
-      <div  class="filters">
+      <!-- Filtres -->
+      <div class="filters">
         <h2>Filtres</h2>
         <div>
           <label for="filter-type">Type :</label>
-          <select  style="margin-left: 70px;" id="filter-type">
+          <select style="margin-left: 70px" id="filter-type">
             <option value="all">Tous</option>
             <option value="income">Revenus</option>
             <option value="expense">Dépenses</option>
@@ -24,21 +24,23 @@
         </div>
         <div>
           <label for="filter-category">Catégorie :</label>
-          <input style="margin-left: 34px;"  type="text" id="filter-category" />
+          <input style="margin-left: 34px" type="text" id="filter-category" />
         </div>
         <div>
           <label for="filter-start-date">Date :</label>
-          <input  style="margin-left: 69px;" type="date" id="filter-start-date" />
+          <input style="margin-left: 69px" type="date" id="filter-start-date" />
         </div>
         <div style="display: none">
           <label for="filter-end-date"> :</label>
           <input type="date" id="filter-end-date" />
         </div>
-        <button style="margin-top: 19px;" id="apply-filters">Appliquer les filtres</button>
+        <button style="margin-top: 19px" id="apply-filters">
+          Appliquer les filtres
+        </button>
       </div>
 
-       <!-- Résultats filtrés -->
-       <div id="results" style="margin-top: 20px;"></div>
+      <!-- Résultats filtrés -->
+      <div style="display: none" id="results" style="margin-top: 20px"></div>
 
       <!-- Résumé des finances -->
       <div class="summary">
@@ -49,21 +51,37 @@
 
       <!-- Canvas pour le graphique -->
       <canvas id="categoryChart" width="400" height="200"></canvas>
+      <div>
+        <a
+          href="index.html"
+          class="btn btn-primary"
+          style="
+            display: inline-block;
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+          "
+          >Acceuil</a
+        >
+      </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
       // Importer les données de localStorage
-      const transactions = JSON.parse(localStorage.getItem("transactions")) || [];
+      const transactions =
+        JSON.parse(localStorage.getItem("transactions")) || [];
+      let filteredTransactions = [...transactions]; // Transactions filtrées (initialement toutes)
 
       // Calculer les totaux
-      function calculateTotals() {
+      function calculateTotals(data) {
         let totalIncome = 0;
         let totalExpense = 0;
 
-        
-
-        transactions.forEach((transaction) => {
+        data.forEach((transaction) => {
           if (transaction.type === "income") {
             totalIncome += transaction.amount;
           } else {
@@ -78,10 +96,10 @@
       }
 
       // Calculer les données pour le graphique
-      function calculateCategoryData() {
+      function calculateCategoryData(data) {
         const categoryTotals = {};
 
-        transactions.forEach((transaction) => {
+        data.forEach((transaction) => {
           if (!categoryTotals[transaction.category]) {
             categoryTotals[transaction.category] = { income: 0, expense: 0 };
           }
@@ -95,17 +113,25 @@
         return categoryTotals;
       }
 
-
-      
-      // Créer le graphique
-      function createChart() {
-        const categoryData = calculateCategoryData();
+      // Créer ou mettre à jour le graphique
+      let chartInstance; // Variable pour stocker l'instance du graphique
+      function updateChart(data) {
+        const categoryData = calculateCategoryData(data);
         const labels = Object.keys(categoryData);
-        const incomeData = labels.map((category) => categoryData[category].income);
-        const expenseData = labels.map((category) => categoryData[category].expense);
+        const incomeData = labels.map(
+          (category) => categoryData[category].income,
+        );
+        const expenseData = labels.map(
+          (category) => categoryData[category].expense,
+        );
 
         const ctx = document.getElementById("categoryChart").getContext("2d");
-        new Chart(ctx, {
+
+        if (chartInstance) {
+          chartInstance.destroy(); // Supprimer l'ancien graphique s'il existe
+        }
+
+        chartInstance = new Chart(ctx, {
           type: "bar",
           data: {
             labels: labels,
@@ -144,64 +170,61 @@
             },
           },
         });
-        
       }
 
-      
-      
+      // Appliquer les filtres
+      document.addEventListener("DOMContentLoaded", function () {
+        document
+          .getElementById("apply-filters")
+          .addEventListener("click", function () {
+            const typeFilter = document.getElementById("filter-type").value;
+            const categoryFilter = document
+              .getElementById("filter-category")
+              .value.toLowerCase();
+            const startDateFilter =
+              document.getElementById("filter-start-date").value;
 
-      // Initialiser la page
-      calculateTotals();
-      createChart();
+            filteredTransactions = transactions.filter((transaction) => {
+              const matchesType =
+                typeFilter === "all" || transaction.type === typeFilter;
+              const matchesCategory =
+                !categoryFilter ||
+                transaction.category.toLowerCase().includes(categoryFilter);
+              const matchesDate =
+                !startDateFilter || transaction.date >= startDateFilter;
+
+              return matchesType && matchesCategory && matchesDate;
+            });
+
+            displayResults(filteredTransactions);
+            calculateTotals(filteredTransactions); // Recalculer les totaux
+            updateChart(filteredTransactions); // Mettre à jour le graphique
+          });
+
+        function displayResults(results) {
+          const resultsContainer = document.getElementById("results");
+          resultsContainer.innerHTML = ""; // Nettoyer les anciens résultats
+
+          if (results.length === 0) {
+            resultsContainer.innerHTML = "<p>Aucune transaction trouvée.</p>";
+            return;
+          }
+
+          results.forEach((transaction) => {
+            const transactionElement = document.createElement("div");
+            transactionElement.textContent = `Type: ${transaction.type}, Catégorie: ${transaction.category}, Date: ${transaction.date}, Montant: ${transaction.amount}`;
+            resultsContainer.appendChild(transactionElement);
+          });
+        }
+
+        // Initialisation de la page
+        calculateTotals(filteredTransactions);
+        updateChart(filteredTransactions);
+      });
     </script>
 
-<script>
-   document.addEventListener("DOMContentLoaded", function () {
-  document.getElementById("apply-filters").addEventListener("click", function () {
-    const storedData = localStorage.getItem("transactions");
-    const transactions = storedData ? JSON.parse(storedData) : [];
-
-    const typeFilter = document.getElementById("filter-type").value;
-    const categoryFilter = document.getElementById("filter-category").value.toLowerCase();
-    const startDateFilter = document.getElementById("filter-start-date").value;
-
-    const filteredTransactions = transactions.filter(transaction => {
-      const matchesType = typeFilter === "all" || transaction.type === typeFilter;
-      const matchesCategory = !categoryFilter || transaction.category.toLowerCase().includes(categoryFilter);
-      const matchesDate = !startDateFilter || transaction.date >= startDateFilter;
-
-      return matchesType && matchesCategory && matchesDate;
-    });
-
-    displayResults(filteredTransactions);
-  });
-
-  function displayResults(results) {
-    const resultsContainer = document.getElementById("results");
-    resultsContainer.innerHTML = ""; // Nettoyer les anciens résultats
-
-    if (results.length === 0) {
-      resultsContainer.innerHTML = "<p>Aucune transaction trouvée.</p>";
-      return;
-    }
-
-    results.forEach(transaction => {
-      const transactionElement = document.createElement("div");
-      transactionElement.textContent = `Type: ${transaction.type}, Catégorie: ${transaction.category}, Date: ${transaction.date}, Montant: ${transaction.amount}`;
-      resultsContainer.appendChild(transactionElement);
-    });
-  }
-});
-
-  </script>
-  
     <script src="assets/js/main.js"></script>
 
     <script src="assets/js/statistique.js"></script>
   </body>
 </html>
-
-
-
-
-

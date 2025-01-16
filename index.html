@@ -6,111 +6,132 @@
     <title>Gestionnaire de Budget</title>
     <link rel="stylesheet" href="assets/css/global.css" />
     <link rel="stylesheet" href="assets/css/responsive.css" />
-    
   </head>
   <body>
-
-
-
-
-
-
-
-
-
-
-
-
     <div class="container">
-        <h1>Gestionnaire de Budget</h1>
-      
-        <!-- Formulaire pour ajouter une transaction -->
-        <form id="transaction-form">
-          <h2>Ajouter une transaction</h2>
-          <div>
-            <label for="type">Type :</label>
-            <select id="type">
-              <option value="income">Revenu</option>
-              <option value="expense">Dépense</option>
-            </select>
-          </div>
-          <div>
-            <label for="amount">Montant :</label>
-            <input type="number" id="amount" required />
-          </div>
-          <div>
-            <label for="category">Catégorie :</label>
-            <input type="text" id="category" required />
-          </div>
-          <div>
-            <label for="date">Date :</label>
-            <input type="date" id="date" required />
-          </div>
-          <button type="submit">Ajouter</button>
-          <!-- Form fields ici -->
-        </form>
+      <h1>Gestionnaire de Budget</h1>
 
-        <div class="summary">
-            <p>Balance totale : <span id="total-balance">0</span> CFA</p>
-            <p>Total des revenus : <span id="total-income">0</span> CFA</p>
-            <p>Total des dépenses : <span id="total-expense">0</span> CFA</p>
-        </div>
-
-
-        <table id="transactions-table">
-            <thead>
-              <tr>
-                <th>Type</th>
-                <th>Montant (CFA)</th>
-                <th>Catégorie</th>
-                <th>Date</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              <!-- Transactions listées ici -->
-            </tbody>
-          </table>
-
-
-           <!-- Lien vers la page des statistiques -->
+      <!-- Formulaire pour ajouter une transaction -->
+      <form id="transaction-form">
+        <h2>Ajouter une transaction</h2>
         <div>
-            <a href="statistics.html" class="btn btn-primary" style="
-              display: inline-block;
-              background-color: #007bff;
-              color: white;
-              padding: 10px 20px;
-              text-decoration: none;
-              border-radius: 8px;
-              font-weight: bold;
-            ">Voir les statistiques</a>
-          </div>
+          <label for="type">Type :</label>
+          <select id="type">
+            <option value="income">Revenu</option>
+            <option value="expense">Dépense</option>
+          </select>
         </div>
-      
-       
-      
-        <!-- Tableau des transactions -->
-        <table id="transactions-table">
-          <!-- Table content ici -->
-        </table>
+        <div>
+          <label for="amount">Montant :</label>
+          <input type="number" id="amount" required />
+        </div>
+        <div>
+          <label for="category">Catégorie :</label>
+          <input type="text" id="category" required />
+        </div>
+        <div>
+          <label for="date">Date :</label>
+          <input type="date" id="date" required />
+        </div>
+        <button type="submit">Ajouter</button>
+        <!-- Form fields ici -->
+      </form>
+
+      <div class="summary">
+        <p>Balance totale : <span id="total-balance">0</span> CFA</p>
+        <p>Total des revenus : <span id="total-income">0</span> CFA</p>
+        <p>Total des dépenses : <span id="total-expense">0</span> CFA</p>
       </div>
-    
+
+      <table id="transactions-table">
+        <thead>
+          <tr>
+            <th>Type</th>
+            <th>Montant (CFA)</th>
+            <th>Catégorie</th>
+            <th>Date</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Transactions listées ici -->
+        </tbody>
+      </table>
+
+      <!-- Lien vers la page des statistiques -->
+      <div>
+        <a
+          href="statistics.html"
+          class="btn btn-primary"
+          style="
+            display: inline-block;
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+          "
+          >Voir les statistiques</a
+        >
+      </div>
+    </div>
+
+    <!-- Tableau des transactions -->
+    <table id="transactions-table">
+      <!-- Table content ici -->
+    </table>
+
     <script>
+      // Fonction pour mettre à jour dynamiquement la section des totaux
+      function updateSummary(data) {
+        let totalIncome = 0;
+        let totalExpense = 0;
 
-const transactionsTable = document
-  .getElementById("transactions-table")
-  .querySelector("tbody");
+        data.forEach((transaction) => {
+          if (transaction.type === "income") {
+            totalIncome += transaction.amount;
+          } else if (transaction.type === "expense") {
+            totalExpense += transaction.amount;
+          }
+        });
 
-let transactions = JSON.parse(localStorage.getItem("transactions")) || [];
+        // Mettre à jour les éléments dans le DOM
+        document.getElementById("total-balance").textContent = (
+          totalIncome - totalExpense
+        ).toFixed(2);
+        document.getElementById("total-income").textContent =
+          totalIncome.toFixed(2);
+        document.getElementById("total-expense").textContent =
+          totalExpense.toFixed(2);
+      }
 
-// Fonction pour afficher les transactions dans le tableau
-function renderTransactions() {
-  transactionsTable.innerHTML = ""; // Réinitialiser le contenu du tableau
+      // Exemple d'appel initial (utilise toutes les transactions par défaut)
+      document.addEventListener("DOMContentLoaded", function () {
+        const transactions =
+          JSON.parse(localStorage.getItem("transactions")) || [];
+        updateSummary(transactions); // Appel initial
+      });
 
-  transactions.forEach((transaction, index) => {
-    const row = document.createElement("tr");
+      // Fonction pour appeler cette mise à jour lorsque les données changent
+      // Exemple d'usage : updateSummary(filteredTransactions);
+    </script>
 
-    row.innerHTML = `
+    <script>
+      const transactionsTable = document
+        .getElementById("transactions-table")
+        .querySelector("tbody");
+
+      let transactions = JSON.parse(localStorage.getItem("transactions")) || [];
+
+      // Fonction pour afficher les transactions dans le tableau
+      function renderTransactions() {
+        transactionsTable.innerHTML = ""; // Réinitialiser le contenu du tableau
+
+        transactions.forEach((transaction, index) => {
+          const row = document.createElement("tr");
+
+          row.innerHTML = `
       <td>${transaction.type === "income" ? "Revenu" : "Dépense"}</td>
       <td>${transaction.amount} CFA</td>
       <td>${transaction.category}</td>
@@ -120,83 +141,83 @@ function renderTransactions() {
       </td>
     `;
 
-    transactionsTable.appendChild(row);
-  });
-}
+          transactionsTable.appendChild(row);
+        });
+      }
 
-// Supprimer une transaction
-function deleteTransaction(index) {
-  transactions.splice(index, 1); // Supprime la transaction
-  localStorage.setItem("transactions", JSON.stringify(transactions)); // Met à jour le localStorage
-  renderTransactions(); // Rafraîchit l'affichage du tableau
-}
+      // Supprimer une transaction
+      function deleteTransaction(index) {
+        transactions.splice(index, 1); // Supprime la transaction
+        localStorage.setItem("transactions", JSON.stringify(transactions)); // Met à jour le localStorage
+        renderTransactions(); // Rafraîchit l'affichage du tableau
+      }
 
-// Ajouter un événement pour le formulaire (si nécessaire)
-document.getElementById("transaction-form").addEventListener("submit", (e) => {
-  e.preventDefault();
+      // Ajouter un événement pour le formulaire (si nécessaire)
+      document
+        .getElementById("transaction-form")
+        .addEventListener("submit", (e) => {
+          e.preventDefault();
 
-  const type = document.getElementById("type").value;
-  const amount = parseFloat(document.getElementById("amount").value);
-  const category = document.getElementById("category").value;
-  const date = document.getElementById("date").value;
+          const type = document.getElementById("type").value;
+          const amount = parseFloat(document.getElementById("amount").value);
+          const category = document.getElementById("category").value;
+          const date = document.getElementById("date").value;
 
-  if (isNaN(amount) || amount <= 0 || !category || !date) {
-    alert("Veuillez remplir tous les champs correctement.");
-    return;
-  }
+          if (isNaN(amount) || amount <= 0 || !category || !date) {
+            alert("Veuillez remplir tous les champs correctement.");
+            return;
+          }
 
-  const newTransaction = { type, amount, category, date };
-  transactions.push(newTransaction); // Ajoute la nouvelle transaction
-  localStorage.setItem("transactions", JSON.stringify(transactions)); // Met à jour le localStorage
-  renderTransactions(); // Rafraîchit le tableau
-  e.target.reset(); // Réinitialise le formulaire
-});
+          const newTransaction = { type, amount, category, date };
+          transactions.push(newTransaction); // Ajoute la nouvelle transaction
+          localStorage.setItem("transactions", JSON.stringify(transactions)); // Met à jour le localStorage
+          renderTransactions(); // Rafraîchit le tableau
+          e.target.reset(); // Réinitialise le formulaire
+        });
 
-// Initialisation
-renderTransactions();
+      // Initialisation
+      renderTransactions();
 
-// Calculer les totaux
-function calculateTotals() {
-  let totalIncome = 0;
-  let totalExpense = 0;
+      // Calculer les totaux
+      function calculateTotals() {
+        let totalIncome = 0;
+        let totalExpense = 0;
 
-  transactions.forEach((transaction) => {
-    if (transaction.type === "income") {
-      totalIncome += transaction.amount;
-    } else {
-      totalExpense += transaction.amount;
-    }
-  });
+        transactions.forEach((transaction) => {
+          if (transaction.type === "income") {
+            totalIncome += transaction.amount;
+          } else {
+            totalExpense += transaction.amount;
+          }
+        });
 
-  document.getElementById("total-balance").textContent =
-    totalIncome - totalExpense;
-  document.getElementById("total-income").textContent = totalIncome;
-  document.getElementById("total-expense").textContent = totalExpense;
-}
+        document.getElementById("total-balance").textContent =
+          totalIncome - totalExpense;
+        document.getElementById("total-income").textContent = totalIncome;
+        document.getElementById("total-expense").textContent = totalExpense;
+      }
 
-// Calculer les données pour le graphique
-function calculateCategoryData() {
-  const categoryTotals = {};
+      // Calculer les données pour le graphique
+      function calculateCategoryData() {
+        const categoryTotals = {};
 
-  transactions.forEach((transaction) => {
-    if (!categoryTotals[transaction.category]) {
-      categoryTotals[transaction.category] = { income: 0, expense: 0 };
-    }
-    if (transaction.type === "income") {
-      categoryTotals[transaction.category].income += transaction.amount;
-    } else {
-      categoryTotals[transaction.category].expense += transaction.amount;
-    }
-  });
+        transactions.forEach((transaction) => {
+          if (!categoryTotals[transaction.category]) {
+            categoryTotals[transaction.category] = { income: 0, expense: 0 };
+          }
+          if (transaction.type === "income") {
+            categoryTotals[transaction.category].income += transaction.amount;
+          } else {
+            categoryTotals[transaction.category].expense += transaction.amount;
+          }
+        });
 
-  return categoryTotals;
-}
+        return categoryTotals;
+      }
 
-
-
-// Initialiser la page
-calculateTotals();
-createChart();
+      // Initialiser la page
+      calculateTotals();
+      createChart();
     </script>
     <script src="assets/js/main.js"></script>
   </body>
