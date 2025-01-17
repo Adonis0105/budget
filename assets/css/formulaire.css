@@ -1,0 +1,60 @@
+/* Formulaire */
+#transaction-form {
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  max-width: 600px;
+  margin: 20px auto;
+}
+
+#transaction-form h2 {
+  font-size: 1.8rem;
+  color: #007bff;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+#transaction-form div {
+  margin-bottom: 15px;
+}
+
+#transaction-form label {
+  font-weight: 600;
+  display: block;
+  margin-bottom: 5px;
+  font-size: 1rem;
+}
+
+#transaction-form input,
+#transaction-form select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+#transaction-form input:focus,
+#transaction-form select:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+#transaction-form button {
+  background-color: #007bff;
+  color: white;
+  font-size: 1rem;
+  font-weight: bold;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  width: 100%;
+}
+
+#transaction-form button:hover {
+  background-color: #0056b3;
+}

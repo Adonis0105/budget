@@ -4,87 +4,111 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Gestionnaire de Budget</title>
-    <link rel="stylesheet" href="assets/css/global.css" />
+    <link rel="stylesheet" href="assets/css/resume.css" />
+    <link rel="stylesheet" href="assets/css/baniere.css" />
+    <link rel="stylesheet" href="assets/css/header.css" />
+    <link rel="stylesheet" href="assets/css/footer.css" />
     <link rel="stylesheet" href="assets/css/responsive.css" />
+    <link rel="stylesheet" href="assets/css/global-index.css" />
+    <link rel="stylesheet" href="assets/css/formulaire.css" />
+    <link rel="stylesheet" href="assets/css/tab.css" />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
   </head>
+
   <body>
-    <div class="container">
-      <h1>Gestionnaire de Budget</h1>
+    <!-- Header -->
+    <header class="header">
+      <nav class="navbar">
+        <div class="logo">
+          <a href="index.html">💰 Budget</a>
+        </div>
+        <ul class="nav-links">
+          <li><a href="index.html">Accueil</a></li>
+          <li><a href="statistics.html">Statistiques</a></li>
+        </ul>
+      </nav>
+    </header>
 
-      <!-- Formulaire pour ajouter une transaction -->
-      <form id="transaction-form">
-        <h2>Ajouter une transaction</h2>
-        <div>
-          <label for="type">Type :</label>
-          <select id="type">
-            <option value="income">Revenu</option>
-            <option value="expense">Dépense</option>
-          </select>
-        </div>
-        <div>
-          <label for="amount">Montant :</label>
-          <input type="number" id="amount" required />
-        </div>
-        <div>
-          <label for="category">Catégorie :</label>
-          <input type="text" id="category" required />
-        </div>
-        <div>
-          <label for="date">Date :</label>
-          <input type="date" id="date" required />
-        </div>
-        <button type="submit">Ajouter</button>
-        <!-- Form fields ici -->
-      </form>
+    <!-- Contenu principal -->
+    <main class="main-content">
+      <div class="container">
+        <h1>Gestionnaire de Budget</h1>
 
-      <div  style="display: none;" class="summary">
-        <p>Balance totale : <span id="total-balance">0</span> CFA</p>
-        <p>Total des revenus : <span id="total-income">0</span> CFA</p>
-        <p>Total des dépenses : <span id="total-expense">0</span> CFA</p>
+        <!-- Formulaire pour ajouter une transaction -->
+        <form id="transaction-form">
+          <h2>Ajouter une transaction</h2>
+          <div>
+            <label for="type">Type :</label>
+            <select id="type">
+              <option value="income">Revenu</option>
+              <option value="expense">Dépense</option>
+            </select>
+          </div>
+          <div>
+            <label for="amount">Montant :</label>
+            <input type="number" id="amount" required />
+          </div>
+          <div>
+            <label for="category">Catégorie :</label>
+            <input type="text" id="category" required />
+          </div>
+          <div>
+            <label for="date">Date :</label>
+            <input type="date" id="date" required />
+          </div>
+          <button type="submit">Ajouter</button>
+        </form>
+
+        <div style="display: none" class="summary">
+          <p>Balance totale : <span id="total-balance">0</span> CFA</p>
+          <p>Total des revenus : <span id="total-income">0</span> CFA</p>
+          <p>Total des dépenses : <span id="total-expense">0</span> CFA</p>
+        </div>
+
+        <div id="tab">
+          <table id="transactions-table">
+            <thead>
+              <tr>
+                <th>Type</th>
+                <th>Montant (CFA)</th>
+                <th>Catégorie</th>
+                <th>Date</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Transactions listées ici -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+          <p>&copy; 2025 BudgetManager. Tous droits réservés.</p>
+          <ul class="footer-links">
+            <li>
+              <a style="text-decoration: none" href=""
+                >Conditions d'utilisation</a
+              >
+            </li>
+            <li>
+              <a style="text-decoration: none" href=""
+                >Politique de confidentialité</a
+              >
+            </li>
+          </ul>
+        </footer>
+
+        <script src="assets/js/dynamique.js"></script>
+        <script src="assets/js/index.js"></script>
+        <script src="assets/js/main.js"></script>
+        <script src="assets/js/stat.js"></script>
+        <script src="assets/js/"></script>
       </div>
-
-      <table id="transactions-table">
-        <thead>
-          <tr>
-            <th>Type</th>
-            <th>Montant (CFA)</th>
-            <th>Catégorie</th>
-            <th>Date</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <!-- Transactions listées ici -->
-        </tbody>
-      </table>
-
-      <!-- Lien vers la page des statistiques -->
-      <div>
-        <a
-          href="statistics.html"
-          class="btn btn-primary"
-          style="
-            display: inline-block;
-            background-color: #007bff;
-            color: white;
-            padding: 10px 20px;
-            text-decoration: none;
-            border-radius: 8px;
-            font-weight: bold;
-          "
-          >Voir les statistiques</a
-        >
-      </div>
-    </div>
-
-    <!-- Tableau des transactions -->
-    <table id="transactions-table">
-      <!-- Table content ici -->
-    </table>
-
-    <script src="assets/js/dynamique.js"></script>
-    <script src="assets/js/index.js"></script>
-    <script src="assets/js/"></script>
-    <script src="assets/js/main.js"></script>
+    </main>
   </body>
 </html>

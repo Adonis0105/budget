@@ -1,72 +1,68 @@
 @media (max-width: 768px) {
-  .container {
-    padding: 15px;
+  .navbar {
+    flex-direction: column;
+    gap: 10px;
   }
-  h1 {
-    font-size: 1.8em;
-  }
-  form div {
-    margin-bottom: 10px;
-  }
-  form label,
-  form input,
-  form select,
-  form button {
-    font-size: 0.9em;
-  }
-  .summary {
-    font-size: 0.9em;
-    padding: 8px;
-  }
-  table th,
-  table td {
-    font-size: 0.9em;
-    padding: 8px;
-  }
-  table {
-    font-size: 0.8em;
-  }
-  table button {
-    font-size: 0.8em;
-    padding: 4px 8px;
-  }
-}
 
-@media (max-width: 480px) {
-  #transactions-table {
-    margin-right: -20px;
+  .form-control {
+    font-size: 0.9rem;
   }
-  .container {
-    padding: 10px;
-    margin-right: -20px;
+
+  .btn {
+    padding: 10px 20px;
+    font-size: 0.9rem;
   }
-  h1 {
-    font-size: 1.5em;
+
+  #tab {
+    flex-direction: column;
   }
-  form div {
-    margin-bottom: 8px;
-  }
-  form label,
-  form input,
-  form select,
-  form button {
-    font-size: 0.8em;
-  }
-  .summary {
-    font-size: 0.8em;
-    padding: 6px;
-  }
-  table th,
-  table td {
-    font-size: 0.8em;
-    padding: 6px;
-  }
-  table button {
-    font-size: 0.7em;
-    padding: 3px 6px;
-  }
-  body {
-    font-size: 0.7em;
-    padding: 6px 6px;
+
+  /* Style pour petits écrans */
+  @media (max-width: 768px) {
+    #transactions-table thead {
+      display: none; /* Cache l'en-tête pour les petits écrans */
+    }
+
+    #transactions-table tr {
+      display: block;
+      margin-bottom: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    #transactions-table td {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px;
+      border: none;
+      border-bottom: 1px solid #ddd;
+    }
+
+    #transactions-table td:last-child {
+      border-bottom: none;
+    }
+
+    #transactions-table td[data-label]::before {
+      content: attr(
+        data-label
+      ); /* Ajoute un label basé sur les noms des colonnes */
+      font-weight: bold;
+      color: #007bff;
+      margin-right: 10px;
+    }
+
+    .delete-btn {
+      background-color: #ff4d4d;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .delete-btn:hover {
+      background-color: #ff1a1a;
+    }
   }
 }
